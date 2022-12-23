@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zi_yu_job/component/file/GetData.dart';
 
 import '../Main.dart';
 import '../component/Content.dart';
@@ -26,8 +27,7 @@ class Login extends State<LoginWidget> {
               height: 50,
               width: MediaQuery.of(context).size.width * 0.5,
               child: Theme(
-                data:
-                    ThemeData(hintColor: Colors.grey),
+                data: ThemeData(hintColor: Colors.grey),
                 child: TextField(
                   decoration: InputDecoration(
                       labelText: "邮箱",
@@ -88,7 +88,9 @@ class Login extends State<LoginWidget> {
                   height: 45,
                   width: 45,
                   child: TextButton(
-                    onPressed: () {visitLogin();},
+                    onPressed: () {
+                      visitLogin();
+                    },
                     style: ButtonStyle(
                         shape: MaterialStateProperty.all(
                           const RoundedRectangleBorder(
@@ -116,26 +118,21 @@ class Login extends State<LoginWidget> {
     //查询数据库是否有游客账户
     var db = await DBManager().getDatabase();
 
-    var user = await db.query("users",where: "id like '%visit%'");
+    var user = await db.query("users", where: "id like '%visit%'");
 
     // db.close();
     // var db2 = await DBManager().getDatabase();
     //如果存在游客账户
-    if(user.isNotEmpty){
-
+    if (user.isNotEmpty) {
       //将游客账户设为使用
-      db.update("users", {"is_use":"1"},where: "id=?",whereArgs: [user[0]["id"]]);
+      db.update("users", {"is_use": "1"},
+          where: "id=?", whereArgs: [user[0]["id"]]);
       Main.setUser(user[0]["id"].toString());
-
-    }else{
+    } else {
       //创建新的游客账户
-      String userId="${DateTime.now().millisecondsSinceEpoch}visit";
+      String userId = "${DateTime.now().millisecondsSinceEpoch}visit";
 
-      db.insert("users", {
-        "id":userId,
-        "token":"-1",
-        "is_use":"1"
-      });
+      db.insert("users", {"id": userId, "token": "-1", "is_use": "1"});
 
       Main.setUser(userId);
     }
@@ -144,5 +141,7 @@ class Login extends State<LoginWidget> {
     Main.getMenu().choice(2);
     getContentWidget.changeWidget(2);
     Main.getMenu().changeLoginState(true);
+    //文件页面初始化
+    GetData.updateFileTree("main");
   }
 }

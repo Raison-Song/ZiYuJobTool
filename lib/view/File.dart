@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:zi_yu_job/component/file/FilesTree.dart';
 import '../Main.dart';
 import '../component/file/Content.dart';
+import '../component/file/GetData.dart';
 import '../config/Style.dart';
 import '../config/file/Style.dart';
 import '../util/SqliteUtil.dart';
@@ -15,11 +16,11 @@ class FileWidget extends StatefulWidget {
     file.updateGroups();
   }
 
-  updateContent(){
+  updateContent() {
     file.updateContent();
   }
 
-  String getChoiceGroup(){
+  String getChoiceGroup() {
     return file.choicedGroup;
   }
 
@@ -28,24 +29,20 @@ class FileWidget extends StatefulWidget {
 }
 
 class File extends State<FileWidget> {
-  final String _noChoiceFile = "";
-
   //当前选中的文件夹或文件
   String choiceFile = "";
-  String choicedGroup="";
+  String choicedGroup = "main";
   //存放文件
-  fileTree files=fileTree();
+  fileTree files = fileTree();
   //存放组名
   List<String> _groups = [];
-//存放内容
-  Widget filesContent=FileContent().getFileContent();
+  //存放内容
+  Widget filesContent = const Text("正在加载");
   // void initState() {
   //   super.initState();
   //   //注册一个回调函数yourCallback
   //   WidgetsBinding.instance.addPostFrameCallback((_) => updateGroups());
   // }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -79,29 +76,40 @@ class File extends State<FileWidget> {
 
   //获取组按钮
   Widget groupBtn(String groupName) {
-    if(choicedGroup!=groupName){
+    if (choicedGroup != groupName) {
       //未选中的
-      return TextButton(onPressed: () {choiceGroup(groupName);}, child: Text(
-        groupName,style: FileStyle().getUnChoiceFont(),));
+      return TextButton(
+          onPressed: () {
+            choiceGroup(groupName);
+          },
+          child: Text(
+            groupName,
+            style: FileStyle().getUnChoiceFont(),
+          ));
     }
-    return TextButton(onPressed: () {}, child: Text(
-        groupName,style: FileStyle().getChoiceFont()));
+    return TextButton(
+        onPressed: () {
+          choiceGroup(groupName);
+        },
+        child: Text(groupName, style: FileStyle().getChoiceFont()));
   }
 
   //切换组
-  void choiceGroup(String groupName){
+  void choiceGroup(String groupName) {
     //将组名保存至choicedGroup
-    choicedGroup=groupName;
+    //如果是第二次点击，则取消选中状态
+    choicedGroup = choicedGroup == groupName ? "main" : choicedGroup = groupName;
+
     //重构组
     updateGroups();
+
+    //构建文件树
+    GetData.updateFileTree(groupName);
   }
 
-
-
   //更新组显示
+  //并将文件树从数据库取出，存放在内存中
   updateGroups() async {
-    print("更新组显示");
-
     Database db = await DBManager().getDatabase();
     var groups = await db
         .query("groups", where: "user_id=?", whereArgs: [Main.getUser()]);
@@ -121,7 +129,7 @@ class File extends State<FileWidget> {
 
   void updateContent() {
     setState(() {
-      filesContent=FileContent().getFileContent(groupName: choicedGroup);
+      filesContent = FileContent().getFileContent(groupName: choicedGroup);
     });
   }
 }

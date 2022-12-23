@@ -46,7 +46,7 @@ class DBManager {
           file_name TEXT NOT NULL
         );
 
-        CREATE UNIQUE INDEX if not exists READ ON folder_file (group_id);
+        CREATE UNIQUE INDEX if not exists READ ON folder_file (group_name);
 
         create table if not exists folder (
           id TEXT NOT NULL CONSTRAINT pk PRIMARY KEY,

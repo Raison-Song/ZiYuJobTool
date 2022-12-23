@@ -1,18 +1,31 @@
-# zi_yu_job
+# zi_yu_job_tool
 
 子语工作台桌面端
 
-## Getting Started
+## 毕业设计
 
-This project is a starting point for a Flutter application.
+### 多端资源管理器（核心功能）
 
-A few resources to get you started if this is your first Flutter project:
+    上传文件
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+    文件分类(时间、类型、自定义组+)文件关键字查找
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+    多端共享
 
-![img.png](img.png)
+    本地生成自定义文件夹，进行文件存放
+
+### 粘贴板记录
+
+    置顶复制分组
+
+### 快速txt，并保存其时间
+
+### 本地全局文件查找
+
+### todo
+
+    当日任务任务队列
+
+### 快捷键
+
+### 基础设置

@@ -11,6 +11,7 @@ class GetData {
   static Map<String, fileTree> filesTrees = {};
 
   //记录展开的目录
+  //todo 注销时清空
   static Map<String, List<String>> filesTreesIsSpread = {};
 
   static Map<String, String> allFiles = {};
@@ -28,20 +29,27 @@ class GetData {
     }
     allFiles = allFilesTEMP;
     db.close();
+
+    //重新渲染
+    getContentWidget.getFileWidget().updateContent();
   }
 
+  //更新文件树，在更新完毕时重新渲染页面
   static updateFileTree(String groupName) async {
     var filesTree = fileTree();
     var db = await DBManager().getDatabase();
-
     var allFiles = await db.query("folder_file",
-        where: "user_id=? and group_id=?",
-        whereArgs: [Main.getUser(), getContentWidget.getChoiceGroup()]);
-
-    var allFolders = await db.query("folder",
-        where: "user_id=? and group_id",
-        whereArgs: [Main.getUser(), getContentWidget.getChoiceGroup()]);
+        where: "user_id=? and group_name=?",
+        whereArgs: [Main.getUser(), groupName]);
     db.close();
+
+    var db2 = await DBManager().getDatabase();
+    var allFolders = await db2.query("folder",
+        where: "user_id=? and group_name=?",
+        whereArgs: [Main.getUser(), groupName]
+    );
+
+    db2.close();
     // filesTrees.putIfAbsent(groupName, () => _fileTree(allFiles, allFolders, filesTree, "root"));
     filesTrees.update(
         groupName,
@@ -49,6 +57,9 @@ class GetData {
             _fileTree(allFiles, allFolders, filesTree, "root", groupName),
         ifAbsent: () =>
             _fileTree(allFiles, allFolders, filesTree, "root", groupName));
+
+    //重新渲染
+    getContentWidget.getFileWidget().updateContent();
   }
 
   static fileTree _fileTree(

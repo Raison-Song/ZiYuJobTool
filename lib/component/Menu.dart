@@ -6,9 +6,9 @@ import '../Main.dart';
 import '../config/Style.dart';
 
 class MenuWidget extends StatefulWidget {
-  final Menu _menu=Menu();
+  final Menu _menu = Menu();
 
-  void choice(int index){
+  void choice(int index) {
     _menu.choice(index);
   }
 
@@ -25,9 +25,9 @@ class Menu extends State<MenuWidget> {
   var menuColor = <Color>[];
   var menuIcon = <IconData>[];
   double _btnWidth = 120;
-  double _blank=10;
+  double _blank = 10;
 
-  bool isLogin=Main.isLogin();
+  bool isLogin = Main.isLogin();
 
   Menu() {
     menuFont.add("0");
@@ -63,9 +63,8 @@ class Menu extends State<MenuWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     return ColoredBox(
-        color: isLogin? Style.unchoiceBtn:Style.unUseBtn,
+        color: isLogin ? Style.unchoiceBtn : Style.unUseBtn,
         child: AnimatedSize(
             alignment: Alignment.centerLeft,
             duration: const Duration(milliseconds: 200),
@@ -75,36 +74,37 @@ class Menu extends State<MenuWidget> {
                 child: Column(children: [
                   Expanded(
                       child: ListView(children: [
-                    newBtn(1),
-                    newBtn(2,isLogin:isLogin),
-                    newBtn(3,isLogin:isLogin),
-                    newBtn(4,isLogin:isLogin),
-                    newBtn(5,isLogin:isLogin),
+                        newBtn(1),
+                        newBtn(2, isLogin: isLogin),
+                        newBtn(3, isLogin: isLogin),
+                        newBtn(4, isLogin: isLogin),
+                        newBtn(5, isLogin: isLogin),
                   ])),
                   newBtn(6),
                   newBtn(7)
                 ]))));
   }
 
-  ColoredBox newBtn(int index,{bool? isLogin}) {
+  ColoredBox newBtn(int index, {bool? isLogin}) {
     isLogin ??= true;
     return ColoredBox(
-        color: isLogin? menuColor[index]:Style.unUseBtn,
+        color: isLogin ? menuColor[index] : Style.unUseBtn,
         child: (TextButton(
-          onPressed: isLogin? () {
-            if (index == 7) {
-              spread();
-            } else {
-              choice(index);
-              getContentWidget.changeWidget(index);
-            }
-          }:null,
+          onPressed: isLogin
+              ? () {
+                  if (index == 7) {
+                    spread();
+                  } else {
+                    choice(index);
+                    getContentWidget.changeWidget(index);
+                  }
+                }
+              : null,
           child: Row(
             children: [
               Icon(
                 menuIcon[index],
                 color: Style.fontMenuColor,
-
               ),
               SizedBox(
                 width: _blank,
@@ -129,7 +129,7 @@ class Menu extends State<MenuWidget> {
 
   void changeLoginState(bool _isLogin) {
     setState(() {
-      isLogin=_isLogin;
+      isLogin = _isLogin;
     });
   }
 
@@ -145,7 +145,7 @@ class Menu extends State<MenuWidget> {
         menuFont[0] = "0";
 
         _btnWidth = 120;
-        _blank=10;
+        _blank = 10;
       });
     } else {
       setState(() {
@@ -156,7 +156,7 @@ class Menu extends State<MenuWidget> {
         menuFont[5] = "";
         menuFont[0] = "1";
         _btnWidth = 40;
-        _blank=0;
+        _blank = 0;
       });
     }
   }

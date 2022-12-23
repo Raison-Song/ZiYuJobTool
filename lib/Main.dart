@@ -8,6 +8,7 @@ import 'package:zi_yu_job/component/Content.dart';
 import 'package:zi_yu_job/util/SqliteUtil.dart';
 
 import 'component/Content.dart';
+import 'component/file/GetData.dart';
 
 class Main {
   static const String _noUser = "NoUser";
@@ -21,7 +22,7 @@ class Main {
     //查询是否有登陆
     var db = await DBManager().getDatabase();
     var getUser = await db.query("users", where: "is_use=?", whereArgs: [1]);
-    print("（初始化）查询到上次登陆的用户：${getUser!}");
+    print("（初始化）查询到上次登陆的用户：$getUser");
     //如果登陆账户只有一个
     if (getUser.length == 1) {
       _user = getUser[0]["id"].toString();
@@ -31,6 +32,8 @@ class Main {
       Main.getMenu().choice(2);
       Main.getMenu().changeLoginState(true);
       getContentWidget.changeWidget(2);
+      //文件页面初始化
+      GetData.updateFileTree("main");
     } else if (getUser.length > 1) {
       //将所有用户下线
       db.update("users", {'is_use': '0'});
@@ -88,12 +91,13 @@ Future<void> main() async {
   //初始化=>获取登陆信息
   Main.initMain();
 
+  //进行页面渲染
   runApp(
     MaterialApp(
       home: Scaffold(
           body: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        Main.getMenu(),
-        Expanded(child: getContentWidget.getWidget())
+            Main.getMenu(),
+            Expanded(child: getContentWidget.getWidget())
       ])),
     ),
   );

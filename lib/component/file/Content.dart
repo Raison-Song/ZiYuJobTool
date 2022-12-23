@@ -7,43 +7,52 @@ import '../Content.dart';
 import 'GetData.dart';
 
 class FileContent{
-
-
+  //通过组名获取文件树按钮
+  //此时文件树数据已经从数据库取出
   Widget getFileContent({String? groupName}){
-    fileTree? tree=fileTree();
-    if(groupName==null){
-      //全部文件
-      tree=GetData.filesTrees["root"];
-    }else{
-      tree=GetData.filesTrees[groupName];
+
+    groupName??="main";
+
+    fileTree? tree=GetData.filesTrees[groupName];
+
+    //如果tree为null，则显示没有文件
+    if(tree==null||
+        (tree.files.isEmpty&&tree.folder.isEmpty)
+    ){
+      return const  Text("目录下为空");
     }
 
-    print(tree);
-
+    print(tree.toStrings());
     return ListView(
       children:
-        getFileList(tree!,"",[])
+        getFileList(tree,"",[],groupName)
       ,
     );
   }
 
-  List<Widget> getFileList(fileTree files,String pre,List<Widget> filesWidget){
-    if(files.isSpread||files.folderName=="root"){
+  List<Widget> getFileList(fileTree files,String pre,List<Widget> filesWidget,String groupName){
+    var spreadList=GetData.filesTreesIsSpread[groupName];
+    spreadList??=[];
+
+    print("读取时：");
+    print(spreadList);
+
+    if(spreadList.contains(files.folderName)||files.folderName=="root"){
       for(int i=0;i<files.folder.length;i++){
-        filesWidget.add(getFileBtn(false, "  ${files.folder[i].folderName}", pre,
-            isSpread: files.folder[i].isSpread,fileTree: files));
-        getFileList(files.folder[i], "$pre      ",filesWidget);
+        filesWidget.add(getFileBtn(false, files.folder[i].folderName, pre,groupName,
+            fileTree: files));
+        getFileList(files.folder[i], "$pre      ",filesWidget,groupName);
       }
 
       for(int i=0;i<files.files.length;i++){
-        filesWidget.add(getFileBtn(true, "  ${files.files[i]}", pre));
+        filesWidget.add(getFileBtn(true, files.files[i], pre,groupName));
       }
     }
 
     return filesWidget;
   }
 
-  Widget getFileBtn(bool isFile,String name,String pre,{bool? isSpread,fileTree? fileTree}){
+  Widget getFileBtn(bool isFile,String name,String pre,String groupName,{fileTree? fileTree}){
     var icon=const Icon(Icons.folder,color: Color(0xffafafaf),);
 
     if(isFile){
@@ -92,28 +101,42 @@ class FileContent{
         children: [
           Text(pre+"      "),
           icon,
-          Text(name,style: FileStyle().getFileFont(),)
+          Text(" "+name,style: FileStyle().getFileFont(),)
         ],
       ));
     }else{
-      isSpread??=false;
+      bool isSpread;
+
+      List<String>? isSpreadList=GetData.filesTreesIsSpread[groupName];
+      if(isSpreadList==null){
+        GetData.filesTreesIsSpread.addAll({groupName:[]});
+      }
+      isSpreadList??=[];
+
+      isSpread=isSpreadList.contains(name);
 
       return TextButton(onPressed: (){
         //将文件夹设置为展开或关闭
         fileTree?.isSpread=!fileTree.isSpread;
+        //更改文件夹展开情况
+        isSpread?GetData.filesTreesIsSpread[groupName]?.remove(name)
+            :GetData.filesTreesIsSpread[groupName]?.add(name);
+
         //重新渲染
         getContentWidget.updateFileContent();
-      }, child: Row(
-        children: [
-          Text(pre),
-          isSpread?const Icon(Icons.arrow_drop_down_rounded,color: Colors.grey,)
+        }, child: Row(
+          children: [
+            Text(pre),
+            isSpread?const Icon(Icons.arrow_drop_down_rounded,color: Colors.grey,)
               :const Icon(Icons.arrow_right,color: Colors.grey),
-          icon,
-          Text(name,style: FileStyle().getFileFont(),)
-        ],
-      ));
+            icon,
+            Text(" "+name,style: FileStyle().getFileFont(),)
+          ],
+        )
+      );
     }
   }
 
 
 }
+
