@@ -142,6 +142,6 @@ class Login extends State<LoginWidget> {
     getContentWidget.changeWidget(2);
     Main.getMenu().changeLoginState(true);
     //文件页面初始化
-    GetData.updateFileTree("main");
+    GetData().updateFileTree("main");
   }
 }

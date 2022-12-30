@@ -4,7 +4,6 @@ import 'package:zi_yu_job/config/MyIcon.dart';
 
 import '../../config/file/Style.dart';
 import '../Content.dart';
-import 'GetData.dart';
 
 class FileContent{
   //通过组名获取文件树按钮
@@ -13,11 +12,12 @@ class FileContent{
 
     groupName??="main";
 
-    fileTree? tree=GetData.filesTrees[groupName];
+
+    fileTree? tree=getContentWidget.getFileWidget().getFilesTrees()[groupName];
 
     //如果tree为null，则显示没有文件
     if(tree==null||
-        (tree.files.isEmpty&&tree.folder.isEmpty)
+        tree.files.isEmpty&&tree.folder.isEmpty
     ){
       return const  Text("目录下为空");
     }
@@ -31,11 +31,9 @@ class FileContent{
   }
 
   List<Widget> getFileList(fileTree files,String pre,List<Widget> filesWidget,String groupName){
-    var spreadList=GetData.filesTreesIsSpread[groupName];
+    var spreadList=getContentWidget.getFileWidget()
+        .getFilesTreesIsSpread()[groupName];
     spreadList??=[];
-
-    print("读取时：");
-    print(spreadList);
 
     if(spreadList.contains(files.folderName)||files.folderName=="root"){
       for(int i=0;i<files.folder.length;i++){
@@ -107,9 +105,11 @@ class FileContent{
     }else{
       bool isSpread;
 
-      List<String>? isSpreadList=GetData.filesTreesIsSpread[groupName];
+      List<String>? isSpreadList=getContentWidget.getFileWidget()
+          .getFilesTreesIsSpread()[groupName];
       if(isSpreadList==null){
-        GetData.filesTreesIsSpread.addAll({groupName:[]});
+        getContentWidget.getFileWidget()
+            .getFilesTreesIsSpread().addAll({groupName:[]});
       }
       isSpreadList??=[];
 
@@ -119,8 +119,10 @@ class FileContent{
         //将文件夹设置为展开或关闭
         fileTree?.isSpread=!fileTree.isSpread;
         //更改文件夹展开情况
-        isSpread?GetData.filesTreesIsSpread[groupName]?.remove(name)
-            :GetData.filesTreesIsSpread[groupName]?.add(name);
+        isSpread?getContentWidget.getFileWidget()
+            .getFilesTreesIsSpread()[groupName]?.remove(name)
+            :getContentWidget.getFileWidget()
+            .getFilesTreesIsSpread()[groupName]?.add(name);
 
         //重新渲染
         getContentWidget.updateFileContent();

@@ -6,17 +6,9 @@ import '../../util/SqliteUtil.dart';
 
 ///获取文件目录树 数据
 class GetData {
-  //存放文件目录树<组，树>
-  //todo 注销时清空
-  static Map<String, fileTree> filesTrees = {};
 
-  //记录展开的目录
-  //todo 注销时清空
-  static Map<String, List<String>> filesTreesIsSpread = {};
 
-  static Map<String, String> allFiles = {};
-
-  static setAllFiles() async {
+  setAllFiles() async {
     Map<String, String> allFilesTEMP = {};
     var db = await DBManager().getDatabase();
     var files = await db.query("folder_file",
@@ -27,7 +19,7 @@ class GetData {
       allFilesTEMP.putIfAbsent(files[i]["file_name"].toString(),
           () => files[i]["upload_time"].toString());
     }
-    allFiles = allFilesTEMP;
+    getContentWidget.getFileWidget().setAllFiles(allFilesTEMP);
     db.close();
 
     //重新渲染
@@ -35,7 +27,7 @@ class GetData {
   }
 
   //更新文件树，在更新完毕时重新渲染页面
-  static updateFileTree(String groupName) async {
+  updateFileTree(String groupName) async {
     var filesTree = fileTree();
     var db = await DBManager().getDatabase();
     var allFiles = await db.query("folder_file",
@@ -51,7 +43,7 @@ class GetData {
 
     db2.close();
     // filesTrees.putIfAbsent(groupName, () => _fileTree(allFiles, allFolders, filesTree, "root"));
-    filesTrees.update(
+    getContentWidget.getFileWidget().getFilesTrees().update(
         groupName,
         (value) =>
             _fileTree(allFiles, allFolders, filesTree, "root", groupName),
@@ -82,7 +74,8 @@ class GetData {
         filesTree.getFolder(folderName).setFolder(
             allFolders[i]["folder_name"].toString(),
             preFolder: folderName);
-        bool? isS = filesTreesIsSpread[groupName]
+        bool? isS = getContentWidget.getFileWidget()
+            .getFilesTreesIsSpread()[groupName]
             ?.contains(allFolders[i]["folder_name"].toString());
         isS ??= false;
 

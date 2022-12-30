@@ -7,7 +7,6 @@ import 'package:zi_yu_job/component/menu.dart';
 import 'package:zi_yu_job/component/Content.dart';
 import 'package:zi_yu_job/util/SqliteUtil.dart';
 
-import 'component/Content.dart';
 import 'component/file/GetData.dart';
 
 class Main {
@@ -33,7 +32,7 @@ class Main {
       Main.getMenu().changeLoginState(true);
       getContentWidget.changeWidget(2);
       //文件页面初始化
-      GetData.updateFileTree("main");
+      GetData().updateFileTree("main");
     } else if (getUser.length > 1) {
       //将所有用户下线
       db.update("users", {'is_use': '0'});

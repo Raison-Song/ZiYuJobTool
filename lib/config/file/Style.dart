@@ -19,6 +19,7 @@ class FileStyle{
     );
   }
 
+
   TextStyle getFileFont(){
     return const TextStyle(
         color: Color(0xff000000),
