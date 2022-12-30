@@ -34,15 +34,17 @@ class fileTree {
   }
 
   fileTree getFolder(String folderName) {
+    print(toStrings());
+
     if (this.folderName == folderName) {
       return this;
     }
     for (int i = 0; i < folder.length; i++) {
-      if (folder[i].getFolder(folderName) != null) {
+      if (folder[i].getFolder(folderName).folderName != "null") {
         return folder[i].getFolder(folderName);
       }
     }
-    throw("不存在此目录");
+    return fileTree(folder: "null");
   }
 
   void setFolder(String folderName,{String? preFolder}) {//todo 查询是否存在重复的文件名

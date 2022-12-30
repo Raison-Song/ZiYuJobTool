@@ -19,7 +19,7 @@ class FileContent{
     if(tree==null||
         tree.files.isEmpty&&tree.folder.isEmpty
     ){
-      return const  Text("目录下为空");
+      return const Text("目录下为空",textAlign:TextAlign.center) ;
     }
 
     print(tree.toStrings());

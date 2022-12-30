@@ -41,7 +41,8 @@ dependencies:
   ffi:
   path:
   fluttertoast:
-
+  #右键上下文
+  contextual_menu:
   flutter:
     sdk: flutter
 
