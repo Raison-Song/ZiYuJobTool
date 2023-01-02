@@ -1,11 +1,10 @@
-import 'dart:math';
 import 'dart:ui';
-
 import 'package:flutter/gestures.dart';
 
-import 'package:process_run/shell.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:zi_yu_job/component/file/FilesTree.dart';
+import 'package:zi_yu_job/component/file/Popup.dart';
+import 'package:zi_yu_job/component/file/ShowContext.dart';
 import '../Main.dart';
 import '../component/file/Content.dart';
 import '../component/file/GetData.dart';
@@ -13,9 +12,9 @@ import '../config/Style.dart';
 import '../config/file/Style.dart';
 import '../util/SqliteUtil.dart';
 import 'package:flutter/material.dart' hide MenuItem;
-import 'package:contextual_menu/contextual_menu.dart';
 
 class FileWidget extends StatefulWidget {
+
   final File file = File();
 
   updateGroups() {
@@ -24,6 +23,10 @@ class FileWidget extends StatefulWidget {
 
   updateContent() {
     file.updateContent();
+  }
+
+  choiceGroup(String groupName){
+    file.choiceGroup(groupName);
   }
 
   String getChoiceGroup() {
@@ -52,6 +55,10 @@ class FileWidget extends StatefulWidget {
 
   setAllFiles(Map<String, String> value) {
     file.allFiles = value;
+  }
+
+  BuildContext getContext(){
+    return file.context;
   }
 
   @override
@@ -104,7 +111,7 @@ class File extends State<FileWidget> {
                               TextButton(
                                   onPressed: () {
                                     //打开弹出框
-                                    _showMyDialog();
+                                    Popup().creatNewGroup();
                                   },
                                   child: const Icon(
                                     Icons.add,
@@ -116,133 +123,24 @@ class File extends State<FileWidget> {
             //不同组内容filesContent
             Expanded(
                 child: Listener(
-                  onPointerDown: (e) {
-                  _openContext = e.kind == PointerDeviceKind.mouse &&
+              onPointerDown: (e) {
+                _openContext = e.kind == PointerDeviceKind.mouse &&
                     e.buttons == kSecondaryMouseButton;
-                  setState(() {});
-                  },
-                  onPointerUp: (e) {
-                    if (_openContext) {
-                      _showContext();
-                      _openContext = false;
-                    }
-                  },
-                  child: SizedBox(width: MediaQuery.of(context).size.width,child: filesContent,) ,
+                setState(() {});
+              },
+              onPointerUp: (e) {
+                if (_openContext) {
+                  ShowContext().showContext();
+                  _openContext = false;
+                }
+              },
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: filesContent,
+              ),
             ))
           ],
         ));
-  }
-
-  //显示上下文菜单
-  _showContext() {
-    Menu _menu = Menu(
-      items: [
-        MenuItem(
-          label: '新加文件',
-          onClick: (_) {
-
-          },
-        ),
-        MenuItem.separator(),
-        MenuItem(
-          label: '新建文件夹',
-          // disabled: true,
-          onClick: (_){
-            _createFloder("root");
-          }
-        ),
-
-      ],
-    );
-    popUpContextualMenu(_menu);
-  }
-
-  void openFile(String filename) {
-    var shell = Shell();
-    shell.run("C:\\Users\\33041\\Desktop\\毕业设计.docx");
-  }
-
-  //弹出窗-增加组
-  Future<void> _showMyDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: true, // 点击任意处取消
-
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return TextField(
-                autofocus: true,
-                maxLength: 14,
-                  decoration: const InputDecoration(
-
-                  labelText:"用户名"),
-                onSubmitted: (value) {
-                  addNewGroup(value);
-                  Navigator.pop(context);
-                  updateGroups();
-                },
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  //弹出窗-新建文件夹
-  Future<void> _createFloder(String preFolder) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: true, // 点击任意处取消
-
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return TextField(
-                autofocus: true,
-                maxLength: 14,
-                onSubmitted: (value) {
-                  addNewFolder(preFolder,value);
-                  Navigator.pop(context);
-                  GetData().updateFileTree(choicedGroup);
-                },
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-  Future<void> addNewFolder(String preFolder,String newFolderName) async {
-    var db = await DBManager().getDatabase();
-    await db.insert("folder", {
-      //id规则:时间戳+userid+5位随机数
-      "id": "${DateTime.now().millisecondsSinceEpoch}u"
-          "${Main.getUser()}r"
-          "${Random.secure().nextInt(100000).toString().padLeft(5, '0')}",
-      "folder_name": newFolderName,
-      "before_folder_name": preFolder,
-      "group_name":choicedGroup,
-      "user_id":Main.getUser()
-    });
-    db.close();
-  }
-
-  Future<void> addNewGroup(String newGroupName) async {
-    var db = await DBManager().getDatabase();
-
-    await db.insert("groups", {
-      //id规则:时间戳+userid+5位随机数
-      "id": "${DateTime.now().millisecondsSinceEpoch}u"
-          "${Main.getUser()}r"
-          "${Random.secure().nextInt(100000).toString().padLeft(5, '0')}",
-      "user_id": Main.getUser(),
-      "group_name": newGroupName
-    });
-    db.close();
   }
 
   List<Widget> getGroupsBtn() {
@@ -256,22 +154,36 @@ class File extends State<FileWidget> {
 
   //获取组按钮
   Widget groupBtn(String groupName) {
-    if (choicedGroup != groupName) {
       //未选中的
-      return TextButton(
-          onPressed: () {
-            choiceGroup(groupName);
+      return Listener(
+          onPointerDown: (e) {
+            _openContext = e.kind == PointerDeviceKind.mouse &&
+                e.buttons == kSecondaryMouseButton;
+            setState(() {});
           },
-          child: Text(
-            groupName,
-            style: FileStyle().getUnChoiceFont(),
-          ));
-    }
-    return TextButton(
-        onPressed: () {
-          choiceGroup(groupName);
-        },
-        child: Text(groupName, style: FileStyle().getChoiceFont()));
+          onPointerUp: (e) {
+            if (_openContext) {
+              bool disable=["上传时间","文件类型","root","main"].contains(groupName);
+              ShowContext().showGroupContext(groupName,disable);
+              _openContext = false;
+            }
+          },
+          child: choicedGroup != groupName?
+          TextButton(
+              onPressed: () {
+                choiceGroup(groupName);
+              },
+              child: Text(
+                groupName,
+                style: FileStyle().getUnChoiceFont())
+          ) :
+          TextButton(
+              onPressed: () {
+                choiceGroup(groupName);
+              },
+              child: Text(groupName, style: FileStyle().getChoiceFont())
+          )
+      );
   }
 
   //切换组
@@ -291,11 +203,10 @@ class File extends State<FileWidget> {
     Database db = await DBManager().getDatabase();
     var groups = await db
         .query("groups", where: "user_id=?", whereArgs: [Main.getUser()]);
-    db.close();
+    //db.close();
 
     List<String> groupsList = [];
     groupsList.add("上传时间");
-    groupsList.add("修改时间");
     groupsList.add("文件类型");
     for (int i = 0; i < groups.length; i++) {
       groupsList.add(groups[i]["group_name"].toString());
@@ -310,4 +221,6 @@ class File extends State<FileWidget> {
       filesContent = FileContent().getFileContent(groupName: choicedGroup);
     });
   }
+
+
 }

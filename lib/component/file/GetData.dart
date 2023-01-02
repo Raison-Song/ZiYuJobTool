@@ -20,7 +20,7 @@ class GetData {
           () => files[i]["upload_time"].toString());
     }
     getContentWidget.getFileWidget().setAllFiles(allFilesTEMP);
-    db.close();
+    //db.close();
 
     //重新渲染
     getContentWidget.getFileWidget().updateContent();
@@ -33,7 +33,7 @@ class GetData {
     var allFiles = await db.query("folder_file",
         where: "user_id=? and group_name=?",
         whereArgs: [Main.getUser(), groupName]);
-    db.close();
+    //db.close();
 
     var db2 = await DBManager().getDatabase();
     var allFolders = await db2.query("folder",

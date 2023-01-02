@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 //文件结构树
 class fileTree {
   fileTree({String? folder}) {
@@ -34,8 +32,6 @@ class fileTree {
   }
 
   fileTree getFolder(String folderName) {
-    print(toStrings());
-
     if (this.folderName == folderName) {
       return this;
     }
@@ -59,7 +55,6 @@ class fileTree {
     // folder.add(fileTree(folder: folderName));
   }
 
-  // @override
   String toStrings({String? pre}) {
     pre ??= "";
     String print = "$folderName\n";

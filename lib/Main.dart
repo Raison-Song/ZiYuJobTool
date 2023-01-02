@@ -2,7 +2,6 @@
 // 这个app，将背景色改为了白色，并且将文本颜色改为了黑色以模仿Material app
 
 import 'package:flutter/material.dart';
-import 'package:process_run/shell.dart';
 import 'package:zi_yu_job/component/menu.dart';
 import 'package:zi_yu_job/component/Content.dart';
 import 'package:zi_yu_job/util/SqliteUtil.dart';
@@ -48,7 +47,7 @@ class Main {
     }
 
     getContentWidget.getFileWidget().updateGroups();
-    db.close();
+    //db.close();
   }
 
   static bool isLogin() {

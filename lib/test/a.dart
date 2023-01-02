@@ -1,9 +1,13 @@
 
-import 'package:zi_yu_job/config/MyIcon.dart';
-
-import '../component/file/FilesTree.dart';
-import '../util/SqliteUtil.dart';
-
+import 'package:process_run/shell.dart';
+// import 'package:zi_yu_job/config/MyIcon.dart';
+//
+// import '../component/file/FilesTree.dart';
+// import '../util/SqliteUtil.dart';
+void openFile(String filename) {
+  var shell = Shell();
+  shell.run("C:\\Users\\33041\\Desktop\\毕业设计.docx");
+}
 void main() async {
   // var db = await DBManager().getDatabase();
   // var groups=await db.query("groups",where: "user_id=?",whereArgs: ["1669795467432visit"]);
@@ -33,4 +37,6 @@ void main() async {
   // tree.setFile("文件4",preFolder: "文件夹1");
   // print(tree.toStrings());
   print("aaakk".split("."));
+
+
 }
