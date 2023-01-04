@@ -14,7 +14,6 @@ import '../util/SqliteUtil.dart';
 import 'package:flutter/material.dart' hide MenuItem;
 
 class FileWidget extends StatefulWidget {
-
   final File file = File();
 
   updateGroups() {
@@ -25,7 +24,7 @@ class FileWidget extends StatefulWidget {
     file.updateContent();
   }
 
-  choiceGroup(String groupName){
+  choiceGroup(String groupName) {
     file.choiceGroup(groupName);
   }
 
@@ -57,8 +56,15 @@ class FileWidget extends StatefulWidget {
     file.allFiles = value;
   }
 
-  BuildContext getContext(){
+  BuildContext getContext() {
     return file.context;
+  }
+
+  bool getOpenContext(){
+    return file.openContext;
+  }
+  setOpenContext(bool b){
+    file.openContext=b;
   }
 
   @override
@@ -86,7 +92,7 @@ class File extends State<FileWidget> {
   Map<String, String> allFiles = {};
 
   //右键上下文是否展开
-  bool _openContext = false;
+  bool openContext = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -124,14 +130,14 @@ class File extends State<FileWidget> {
             Expanded(
                 child: Listener(
               onPointerDown: (e) {
-                _openContext = e.kind == PointerDeviceKind.mouse &&
+                openContext = e.kind == PointerDeviceKind.mouse &&
                     e.buttons == kSecondaryMouseButton;
                 setState(() {});
               },
               onPointerUp: (e) {
-                if (_openContext) {
+                if (openContext) {
                   ShowContext().showContext();
-                  _openContext = false;
+                  openContext = false;
                 }
               },
               child: SizedBox(
@@ -154,36 +160,31 @@ class File extends State<FileWidget> {
 
   //获取组按钮
   Widget groupBtn(String groupName) {
-      //未选中的
-      return Listener(
-          onPointerDown: (e) {
-            _openContext = e.kind == PointerDeviceKind.mouse &&
-                e.buttons == kSecondaryMouseButton;
-            setState(() {});
-          },
-          onPointerUp: (e) {
-            if (_openContext) {
-              bool disable=["上传时间","文件类型","root","main"].contains(groupName);
-              ShowContext().showGroupContext(groupName,disable);
-              _openContext = false;
-            }
-          },
-          child: choicedGroup != groupName?
-          TextButton(
-              onPressed: () {
-                choiceGroup(groupName);
-              },
-              child: Text(
-                groupName,
-                style: FileStyle().getUnChoiceFont())
-          ) :
-          TextButton(
-              onPressed: () {
-                choiceGroup(groupName);
-              },
-              child: Text(groupName, style: FileStyle().getChoiceFont())
-          )
-      );
+    //未选中的
+    return Listener(
+        onPointerDown: (e) {
+          openContext = e.kind == PointerDeviceKind.mouse &&
+              e.buttons == kSecondaryMouseButton;
+          setState(() {});
+        },
+        onPointerUp: (e) {
+          if (openContext) {
+            bool disable = ["上传时间", "文件类型", "root", "main"].contains(groupName);
+            ShowContext().showGroupContext(groupName, disable);
+            openContext = false;
+          }
+        },
+        child: choicedGroup != groupName
+            ? TextButton(
+                onPressed: () {
+                  choiceGroup(groupName);
+                },
+                child: Text(groupName, style: FileStyle().getUnChoiceFont()))
+            : TextButton(
+                onPressed: () {
+                  choiceGroup(groupName);
+                },
+                child: Text(groupName, style: FileStyle().getChoiceFont())));
   }
 
   //切换组
@@ -221,6 +222,4 @@ class File extends State<FileWidget> {
       filesContent = FileContent().getFileContent(groupName: choicedGroup);
     });
   }
-
-
 }

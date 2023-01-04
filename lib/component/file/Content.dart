@@ -1,5 +1,9 @@
+import 'dart:ui';
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:zi_yu_job/component/file/FilesTree.dart';
+import 'package:zi_yu_job/component/file/ShowContext.dart';
 import 'package:zi_yu_job/config/MyIcon.dart';
 
 import '../../config/file/Style.dart';
@@ -115,7 +119,21 @@ class FileContent{
 
       isSpread=isSpreadList.contains(name);
 
-      return TextButton(onPressed: (){
+      return Listener(
+          onPointerDown: (e) {
+            getContentWidget.getFileWidget().setOpenContext(e.kind == PointerDeviceKind.mouse &&
+                e.buttons == kSecondaryMouseButton);
+          },
+          onPointerUp: (e) {
+            if (getContentWidget.getFileWidget().getOpenContext()) {
+
+              ShowContext().editFolder(name);
+
+              getContentWidget.getFileWidget().setOpenContext(false);
+            }
+          },
+
+          child:TextButton(onPressed: (){
         //将文件夹设置为展开或关闭
         fileTree?.isSpread=!fileTree.isSpread;
         //更改文件夹展开情况
@@ -135,7 +153,7 @@ class FileContent{
             Text(" "+name,style: FileStyle().getFileFont(),)
           ],
         )
-      );
+      ));
     }
   }
 
