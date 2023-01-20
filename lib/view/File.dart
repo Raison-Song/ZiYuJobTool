@@ -71,7 +71,7 @@ class FileWidget extends StatefulWidget {
   State<StatefulWidget> createState() => file;
 }
 
-class File extends State<FileWidget> {
+class File extends State<StatefulWidget>  {
   //当前选中的文件夹或文件
   String choiceFile = "";
   String choicedGroup = "main";
