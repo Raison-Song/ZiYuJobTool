@@ -91,7 +91,40 @@ class Menu extends State<StatefulWidget> {
       });
     });
   }
+  spreadBtn(){
 
+    return ColoredBox(
+        color: isLogin
+            ? MenuStyle.unChosenBtn
+            : MenuStyle.unUseBtn,
+        child: (TextButton(
+          onPressed: ()=> spread(),
+          child: Row(
+            children: [
+              Icon(
+                Icons.switch_left,
+                color: MenuStyle.fontMenuColor,
+              ),
+              SizedBox(
+                width: _blank,
+              ),
+            ],
+          ),
+        )));
+  }
+  spread(){
+    if(_btnWidth==40){
+      setState(() {
+        _btnWidth==120;
+        _blank=10;
+      });
+    }else{
+      setState(() {
+        _blank=0;
+        _btnWidth=40;
+      });
+    }
+  }
   void changeLoginState(bool bool) {
     setState(() {
       isLogin=bool;
