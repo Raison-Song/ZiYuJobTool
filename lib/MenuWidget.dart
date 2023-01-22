@@ -41,9 +41,9 @@ class Menu extends State<StatefulWidget> {
                 child: Column(children: [
                   Expanded(
                       child: ListView(children:
-                        getModulesBtnWidget()
+                        modulesBtnWidget
                       )),
-
+                  spreadBtn()
                 ]))));
   }
 
@@ -70,16 +70,12 @@ class Menu extends State<StatefulWidget> {
                 width: _blank,
               ),
               Text(
-                module.moduleName,
+                _btnWidth==40?"":module.moduleName,
                 style: MenuStyle.menuStyle(),
               )
             ],
           ),
         )));
-  }
-
-  getModulesBtnWidget(){
-    return modulesBtnWidget;
   }
 
   void choice(String moduleName) {
@@ -92,7 +88,6 @@ class Menu extends State<StatefulWidget> {
     });
   }
   spreadBtn(){
-
     return ColoredBox(
         color: isLogin
             ? MenuStyle.unChosenBtn
@@ -115,16 +110,19 @@ class Menu extends State<StatefulWidget> {
   spread(){
     if(_btnWidth==40){
       setState(() {
-        _btnWidth==120;
+        _btnWidth=120;
         _blank=10;
       });
     }else{
       setState(() {
-        _blank=0;
         _btnWidth=40;
+        _blank=0;
+
       });
     }
+    choice(chosenBtn);
   }
+
   void changeLoginState(bool bool) {
     setState(() {
       isLogin=bool;
