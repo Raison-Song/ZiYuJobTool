@@ -7,7 +7,7 @@ import 'package:zi_yu_job/config/MyIcon.dart';
 
 import '../../MyWidget.dart';
 import '../../WidgetManage.dart';
-import '../../config/file/Style.dart';
+import 'Style.dart';
 import '../FileModule.dart';
 import 'FilesTree.dart';
 import 'ShowContext.dart';

@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 import '../Main.dart';
 
 import '../config/Style.dart';
-import '../config/file/Style.dart';
+import 'fileModule/Style.dart';
 import '../util/SqliteUtil.dart';
 import 'package:flutter/material.dart' hide MenuItem;
 
