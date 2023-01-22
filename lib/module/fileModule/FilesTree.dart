@@ -55,6 +55,7 @@ class fileTree {
     // folder.add(fileTree(folder: folderName));
   }
 
+  //todo 改为StringBuffer
   String toStrings({String? pre}) {
     pre ??= "";
     String print = "$folderName\n";

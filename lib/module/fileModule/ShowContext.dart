@@ -1,8 +1,11 @@
 import 'package:contextual_menu/contextual_menu.dart';
+import 'package:zi_yu_job/MyWidget.dart';
+import 'package:zi_yu_job/WidgetManage.dart';
+import 'package:zi_yu_job/module/FileModule.dart';
 
 import '../../Main.dart';
 import '../../util/SqliteUtil.dart';
-import '../Content.dart';
+
 import 'Popup.dart';
 
 class ShowContext{
@@ -28,6 +31,10 @@ class ShowContext{
 
   //显示上下文菜单-编辑文件夹
   editFolder(String folderName) {
+    ///获取file
+    FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+            () => MyWidget(FileModule())).abstractModule as FileModule);
+
     Menu _menu = Menu(
       items: [
         MenuItem(
@@ -51,8 +58,10 @@ class ShowContext{
             label: '删除文件夹',
             onClick: (_) {
               delFolder(folderName);
-              getContentWidget.getFileWidget()
-                  .choiceGroup(getContentWidget.getFileWidget().getChoiceGroup());
+              fileModule
+                  .choiceGroup(
+                  fileModule
+                      .chosenGroup);
             }),
       ],
     );
@@ -61,6 +70,10 @@ class ShowContext{
 
   //显示上下文菜单-组操作
   showGroupContext(String groupName, bool disabled) {
+    ///获取file
+    FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+            () => MyWidget(FileModule())).abstractModule as FileModule);
+
     Menu _menu = Menu(
       items: [
         MenuItem(
@@ -69,12 +82,11 @@ class ShowContext{
           onClick: (_) {
             Popup().renameGroup(groupName);
 
-            if(groupName==getContentWidget.getFileWidget().getChoiceGroup()){
-              getContentWidget.getFileWidget()
-                  .choiceGroup("main");
+            if(groupName==fileModule.chosenGroup){
+              fileModule.choiceGroup("main");
             }else{
-              getContentWidget.getFileWidget()
-                  .choiceGroup(getContentWidget.getFileWidget().getChoiceGroup());
+              fileModule
+                  .choiceGroup(fileModule.chosenGroup);
             }
           },
         ),
@@ -84,12 +96,12 @@ class ShowContext{
             disabled: disabled,
             onClick: (_) {
               deleteGroup(groupName);
-              if(groupName==getContentWidget.getFileWidget().getChoiceGroup()){
-                getContentWidget.getFileWidget()
+              if(groupName==fileModule.chosenGroup){
+                fileModule
                     .choiceGroup("main");
               }else{
-                getContentWidget.getFileWidget()
-                    .choiceGroup(getContentWidget.getFileWidget().getChoiceGroup());
+                fileModule
+                    .choiceGroup(fileModule.chosenGroup);
               }
             }),
       ],
@@ -116,7 +128,10 @@ class ShowContext{
 
   //删除文件夹
   delFolder(String folderName,{String? choicedGroup}) async {
-    choicedGroup??=getContentWidget.getFileWidget().getChoiceGroup();
+    ///获取file
+    FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+            () => MyWidget(FileModule())).abstractModule as FileModule);
+    choicedGroup??=fileModule.chosenGroup;
     //查询子文件夹
     var db = await DBManager().getDatabase();
     List<Map<String,Object?>> id= await db.query("folder",

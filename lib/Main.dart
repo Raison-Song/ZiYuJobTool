@@ -2,11 +2,14 @@
 // 这个app，将背景色改为了白色，并且将文本颜色改为了黑色以模仿Material app
 
 import 'package:flutter/material.dart';
-import 'package:zi_yu_job/component/menu.dart';
-import 'package:zi_yu_job/component/Content.dart';
+import 'package:zi_yu_job/WidgetManage.dart';
+
 import 'package:zi_yu_job/util/SqliteUtil.dart';
 
-import 'component/file/GetData.dart';
+import 'MenuWidget.dart';
+import 'MyWidget.dart';
+import 'module/FileModule.dart';
+import 'module/fileModule/GetData.dart';
 
 class Main {
   static const String _noUser = "NoUser";
@@ -16,8 +19,13 @@ class Main {
   //文件缓存位置
   static String _folderAddress="";
 
+  static final MenuWidget _menu = MenuWidget();
+
   static Future<void> initMain() async {
-    //查询是否有登陆
+
+    WidgetManage.scanWidgets();
+
+    ///查询是否有登陆
     var db = await DBManager().getDatabase();
     var getUser = await db.query("users", where: "is_use=?", whereArgs: [1]);
     print("（初始化）查询到上次登陆的用户：$getUser");
@@ -27,26 +35,27 @@ class Main {
       _folderAddress=getUser[0]["folder_address"].toString();
       print("跳转到文件管理页面");
       //跳转到文件管理页面
-      Main.getMenu().choice(2);
-      Main.getMenu().changeLoginState(true);
-      getContentWidget.changeWidget(2);
+      Main.getMenu().menu.choice("文件管理");
+      Main.getMenu().menu.changeLoginState(true);
+      WidgetManage.contentWidgets.content.changeWidget("文件管理");
       //文件页面初始化
       GetData().updateFileTree("main");
     } else if (getUser.length > 1) {
       //将所有用户下线
       db.update("users", {'is_use': '0'});
       //跳转到登陆页面
-      Main.getMenu().choice(1);
-      Main.getMenu().changeLoginState(false);
-      getContentWidget.changeWidget(1);
+      Main.getMenu().menu.choice("用户登录");
+      Main.getMenu().menu.changeLoginState(false);
+      WidgetManage.contentWidgets.content.changeWidget("用户信息");
     }else{
       //跳转到登陆页面
-      Main.getMenu().choice(1);
-      Main.getMenu().changeLoginState(false);
-      getContentWidget.changeWidget(1);
+      Main.getMenu().menu.choice("用户登录");
+      Main.getMenu().menu.changeLoginState(false);
+      WidgetManage.contentWidgets.content.changeWidget("用户登录");
     }
-
-    getContentWidget.getFileWidget().updateGroups();
+    FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+            () => MyWidget(FileModule())).abstractModule as FileModule);
+    fileModule.updateGroups();
     //db.close();
   }
 
@@ -65,7 +74,7 @@ class Main {
   static String getUser() {
     return _user;
   }
-
+///注销用户
   static void logoutUser() {
     _user = _noUser;
   }
@@ -77,8 +86,6 @@ class Main {
   static String getFolderAddress(){
     return _folderAddress;
   }
-
-  static final MenuWidget _menu = MenuWidget();
 
   static MenuWidget getMenu() {
     return _menu;
@@ -95,7 +102,7 @@ Future<void> main() async {
       home: Scaffold(
           body: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Main.getMenu(),
-            Expanded(child: getContentWidget.getWidget())
+            Expanded(child: WidgetManage.contentWidgets)
       ])),
     ),
   );

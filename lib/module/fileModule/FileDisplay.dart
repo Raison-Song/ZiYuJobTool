@@ -2,14 +2,20 @@ import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:zi_yu_job/component/file/FilesTree.dart';
-import 'package:zi_yu_job/component/file/ShowContext.dart';
+
 import 'package:zi_yu_job/config/MyIcon.dart';
 
+import '../../MyWidget.dart';
+import '../../WidgetManage.dart';
 import '../../config/file/Style.dart';
-import '../Content.dart';
+import '../FileModule.dart';
+import 'FilesTree.dart';
+import 'ShowContext.dart';
 
 class FileContent{
+
+  FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+          () => MyWidget(FileModule())).abstractModule as FileModule);
   //通过组名获取文件树按钮
   //此时文件树数据已经从数据库取出
   Widget getFileContent({String? groupName}){
@@ -17,7 +23,7 @@ class FileContent{
     groupName??="main";
 
 
-    fileTree? tree=getContentWidget.getFileWidget().getFilesTrees()[groupName];
+    fileTree? tree=fileModule.filesTrees[groupName];
 
     //如果tree为null，则显示没有文件
     if(tree==null||
@@ -29,14 +35,14 @@ class FileContent{
     print(tree.toStrings());
     return ListView(
       children:
-        getFileList(tree,"",[],groupName)
+      getFileList(tree,"",[],groupName)
       ,
     );
   }
 
   List<Widget> getFileList(fileTree files,String pre,List<Widget> filesWidget,String groupName){
-    var spreadList=getContentWidget.getFileWidget()
-        .getFilesTreesIsSpread()[groupName];
+    var spreadList=fileModule
+        .filesTreesIsSpread[groupName];
     spreadList??=[];
 
     if(spreadList.contains(files.folderName)||files.folderName=="root"){
@@ -109,11 +115,11 @@ class FileContent{
     }else{
       bool isSpread;
 
-      List<String>? isSpreadList=getContentWidget.getFileWidget()
-          .getFilesTreesIsSpread()[groupName];
+      List<String>? isSpreadList=fileModule
+          .filesTreesIsSpread[groupName];
       if(isSpreadList==null){
-        getContentWidget.getFileWidget()
-            .getFilesTreesIsSpread().addAll({groupName:[]});
+        fileModule
+            .filesTreesIsSpread.addAll({groupName:[]});
       }
       isSpreadList??=[];
 
@@ -121,39 +127,39 @@ class FileContent{
 
       return Listener(
           onPointerDown: (e) {
-            getContentWidget.getFileWidget().setOpenContext(e.kind == PointerDeviceKind.mouse &&
+            fileModule.openContext=(e.kind == PointerDeviceKind.mouse &&
                 e.buttons == kSecondaryMouseButton);
           },
           onPointerUp: (e) {
-            if (getContentWidget.getFileWidget().getOpenContext()) {
+            if (fileModule.openContext) {
 
               ShowContext().editFolder(name);
 
-              getContentWidget.getFileWidget().setOpenContext(false);
+              fileModule.openContext=false;
             }
           },
 
           child:TextButton(onPressed: (){
-        //将文件夹设置为展开或关闭
-        fileTree?.isSpread=!fileTree.isSpread;
-        //更改文件夹展开情况
-        isSpread?getContentWidget.getFileWidget()
-            .getFilesTreesIsSpread()[groupName]?.remove(name)
-            :getContentWidget.getFileWidget()
-            .getFilesTreesIsSpread()[groupName]?.add(name);
+            //将文件夹设置为展开或关闭
+            fileTree?.isSpread=!fileTree.isSpread;
+            //更改文件夹展开情况
+            isSpread?fileModule
+                .filesTreesIsSpread[groupName]?.remove(name)
+                :fileModule
+                .filesTreesIsSpread[groupName]?.add(name);
 
-        //重新渲染
-        getContentWidget.updateFileContent();
-        }, child: Row(
-          children: [
-            Text(pre),
-            isSpread?const Icon(Icons.arrow_drop_down_rounded,color: Colors.grey,)
-              :const Icon(Icons.arrow_right,color: Colors.grey),
-            icon,
-            Text(" "+name,style: FileStyle().getFileFont(),)
-          ],
-        )
-      ));
+            //重新渲染
+            fileModule.updateContent();
+          }, child: Row(
+            children: [
+              Text(pre),
+              isSpread?const Icon(Icons.arrow_drop_down_rounded,color: Colors.grey,)
+                  :const Icon(Icons.arrow_right,color: Colors.grey),
+              icon,
+              Text(" "+name,style: FileStyle().getFileFont(),)
+            ],
+          )
+          ));
     }
   }
 

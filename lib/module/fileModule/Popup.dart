@@ -2,19 +2,27 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:zi_yu_job/component/Content.dart';
 
 import '../../Main.dart';
+import '../../MyWidget.dart';
+import '../../WidgetManage.dart';
 import '../../util/SqliteUtil.dart';
 import 'package:flutter/material.dart' hide MenuItem;
 
+import '../FileModule.dart';
 import 'GetData.dart';
+
+///弹出框
 class Popup{
 
   //弹出窗-新建文件夹
   Future<void> createFloder(String preFolder) async {
+
+    FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+            () => MyWidget(FileModule())).abstractModule as FileModule);
+
     return showDialog<void>(
-      context: getContentWidget.getFileWidget().getContext(),
+      context: fileModule.context,
       barrierDismissible: true, // 点击任意处取消
 
       builder: (BuildContext context) {
@@ -28,7 +36,7 @@ class Popup{
                 onSubmitted: (value) {
                   addNewFolder(preFolder, value);
                   Navigator.pop(context);
-                  GetData().updateFileTree(getContentWidget.getFileWidget().getChoiceGroup());
+                  GetData().updateFileTree(fileModule.chosenGroup);
                 },
               );
             },
@@ -39,8 +47,12 @@ class Popup{
   }
   //弹出窗-增加组
   Future<void> creatNewGroup() async {
+
+    FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+            () => MyWidget(FileModule())).abstractModule as FileModule);
+
     return showDialog<void>(
-      context: getContentWidget.getFileWidget().getContext(),
+      context: fileModule.context,
       barrierDismissible: true, // 点击任意处取消
 
       builder: (BuildContext context) {
@@ -54,7 +66,7 @@ class Popup{
                 onSubmitted: (value) {
                   addNewGroup(value);
                   Navigator.pop(context);
-                  getContentWidget.getFileWidget().updateGroups();
+                  fileModule.updateGroups();
                 },
               );
             },
@@ -66,8 +78,11 @@ class Popup{
 
   //弹出窗-重命名组
   Future<void> renameGroup(String oldGroupName) async {
+    FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+            () => MyWidget(FileModule())).abstractModule as FileModule);
+
     return showDialog<void>(
-      context: getContentWidget.getFileWidget().getContext(),
+      context: fileModule.context,
       barrierDismissible: true, // 点击任意处取消
 
       builder: (BuildContext context) {
@@ -81,7 +96,7 @@ class Popup{
                 onSubmitted: (value) {
                   rename(value,oldGroupName);
                   Navigator.pop(context);
-                  getContentWidget.getFileWidget().updateGroups();
+                  fileModule.updateGroups();
                 },
               );
             },
@@ -117,6 +132,9 @@ class Popup{
   }
 
   Future<void> addNewFolder(String preFolder, String newFolderName) async {
+    FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+            () => MyWidget(FileModule())).abstractModule as FileModule);
+
     var db = await DBManager().getDatabase();
     await db.insert("folder", {
       //id规则:时间戳+userid+5位随机数
@@ -125,7 +143,7 @@ class Popup{
           "${Random.secure().nextInt(100000).toString().padLeft(5, '0')}",
       "folder_name": newFolderName,
       "before_folder_name": preFolder,
-      "group_name": getContentWidget.getFileWidget().getChoiceGroup(),
+      "group_name": fileModule.chosenGroup,
       "user_id": Main.getUser()
     });
     //db.close();

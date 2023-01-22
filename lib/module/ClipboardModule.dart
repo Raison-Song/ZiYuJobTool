@@ -1,20 +1,28 @@
+
 import 'package:flutter/material.dart';
-import 'package:zi_yu_job/config/clipboard/Style.dart';
+import 'package:zi_yu_job/AbstractModule.dart';
 
-import '../config/Style.dart';
-import '../module/clipboardModule/ClipboardContent.dart';
+import '../MenuStyle.dart';
+import 'clipboardModule/ClipboardContent.dart';
+import 'clipboardModule/ClipboardStyle.dart';
 
-class ClipboardWidget extends StatefulWidget {
+class ClipboardModule extends AbstractModule{
   @override
-  State<StatefulWidget> createState() => Clipboard();
-}
+  IconData icon=Icons.file_copy;
 
-/// 粘贴板
-class Clipboard extends State<ClipboardWidget> {
+  @override
+  String moduleCreator="syhsuiyue@gamil.com";
+
+  @override
+  String moduleDescription="粘贴板";
+
+  @override
+  String moduleName="粘贴板";
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Style.bgColor,
+      color: MenuStyle.bgColor,
       child: Column(
         children: [
           //搜索栏
@@ -67,4 +75,5 @@ class Clipboard extends State<ClipboardWidget> {
       ),
     );
   }
+
 }
