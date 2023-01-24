@@ -2,27 +2,34 @@ import 'package:contextual_menu/contextual_menu.dart';
 import 'package:zi_yu_job/MyWidget.dart';
 import 'package:zi_yu_job/WidgetManage.dart';
 import 'package:zi_yu_job/module/FileModule.dart';
+import 'package:zi_yu_job/module/fileModule/FileOperate.dart';
 
 import '../../Main.dart';
 import '../../util/SqliteUtil.dart';
 
+import 'GetData.dart';
 import 'Popup.dart';
 
 class ShowContext{
 
   //显示上下文菜单
   showContext() {
+    ///获取file
+    FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+            () => MyWidget(FileModule())).abstractModule as FileModule);
     Menu _menu = Menu(
       items: [
         MenuItem(
           label: '新加文件',
-          onClick: (_) {},
+          onClick: (_) {
+            FileOperate().importLocalFile("root",fileModule.chosenGroup);
+          },
         ),
         MenuItem.separator(),
         MenuItem(
             label: '新建文件夹',
             onClick: (_) {
-              Popup().createFloder("root");
+              Popup().createFolder("root");
             }),
       ],
     );
@@ -44,13 +51,14 @@ class ShowContext{
         MenuItem(
           label: '新加文件',
           onClick: (_) {
+            FileOperate().importLocalFile(folderName,fileModule.chosenGroup);
 
           },
         ),
         MenuItem(
           label: '新建文件夹',
           onClick: (_) {
-            Popup().createFloder(folderName);
+            Popup().createFolder(folderName);
           },
         ),
         MenuItem.separator(),

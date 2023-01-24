@@ -36,6 +36,8 @@ dependencies:
   sqflite_common_ffi:
   #文件操作
   path_provider:
+  #本地文件选择
+  file_selector: 0.9.2+2
   sqflite:
   async:
   process_run:

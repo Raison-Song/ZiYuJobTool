@@ -16,7 +16,7 @@ import 'GetData.dart';
 class Popup{
 
   //弹出窗-新建文件夹
-  Future<void> createFloder(String preFolder) async {
+  Future<void> createFolder(String preFolder) async {
 
     FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
             () => MyWidget(FileModule())).abstractModule as FileModule);

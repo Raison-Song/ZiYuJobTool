@@ -88,24 +88,21 @@ class Menu extends State<StatefulWidget> {
     });
   }
   spreadBtn(){
-    return ColoredBox(
+    return Container(
+      width: _btnWidth,
         color: isLogin
             ? MenuStyle.unChosenBtn
             : MenuStyle.unUseBtn,
         child: (TextButton(
           onPressed: ()=> spread(),
-          child: Row(
-            children: [
+          child:
               Icon(
                 Icons.switch_left,
                 color: MenuStyle.fontMenuColor,
               ),
-              SizedBox(
-                width: _blank,
-              ),
-            ],
-          ),
-        )));
+
+          )
+        ));
   }
   spread(){
     if(_btnWidth==40){
