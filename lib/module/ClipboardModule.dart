@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:zi_yu_job/AbstractModule.dart';
 
 import '../MenuStyle.dart';
-import 'clipboardModule/ClipboardContent.dart';
 import 'clipboardModule/ClipboardStyle.dart';
+import '../component/clipboard/Content.dart';
+import 'package:flutter/services.dart';
 
 class ClipboardModule extends AbstractModule{
   @override
@@ -18,6 +18,38 @@ class ClipboardModule extends AbstractModule{
 
   @override
   String moduleName="粘贴板";
+
+
+  String _clipboardText = '';
+
+  List<Widget> copyDataList =<Widget>[];
+  List<Widget> copyCollectDataList =<Widget>[];
+
+  void _loadClipboardContent() async {
+    ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
+    if (data != null) {
+      setState(() {
+        _clipboardText = data.text ?? '';
+      });
+    }
+  }
+
+  Future<void> getCopyListAsync() async {
+    var copyDataListTemp =await ClipboardContent.getContent();
+    var copyCollectDataListTemp =await ClipboardContent.getCopyCollect();
+    setState(() {
+      copyDataList=copyDataListTemp;
+      copyCollectDataList=copyCollectDataListTemp;
+    });
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    // _loadClipboardContent();
+    getCopyListAsync();
+    //todo 将数据库数据保存至内存，读取剪切板时同时保存内存与数据库
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +82,17 @@ class ClipboardModule extends AbstractModule{
                         margin: const EdgeInsets.only(
                             left: 20, top: 10, right: 20, bottom: 20),
                         color: ClipboardStyle.white,
-                        child: ClipboardContent.getContent())),
+                        child: ListView(
+                          children: copyDataList,
+                        ))),
                 Expanded(
                     child: Container(
                         color: ClipboardStyle.white,
                         margin: const EdgeInsets.only(
                             left: 0, top: 10, right: 20, bottom: 20),
-                        child: ClipboardContent.getGroupContent()))
+                        child: ListView(
+                          children: copyCollectDataList,
+                        )))
               ],
             ),
           ),
@@ -65,15 +101,15 @@ class ClipboardModule extends AbstractModule{
             color: Colors.lightBlue,
             width: MediaQuery.of(context).size.width * 1,
             height: 200,
-            margin: EdgeInsets.only(left: 20, top: 0, right: 20, bottom: 20),
+            margin: const EdgeInsets.only(left: 20, top: 0, right: 20, bottom: 20),
             child: ColoredBox(
               color: ClipboardStyle.white,
-              child: ClipboardContent.getDetail(),
+              child: ListView(children: []),
             ),
           )
         ],
       ),
     );
   }
-
 }
+
