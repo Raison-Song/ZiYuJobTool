@@ -60,25 +60,29 @@ class FileWidget extends StatefulWidget {
     return file.context;
   }
 
-  bool getOpenContext(){
+  bool getOpenContext() {
     return file.openContext;
   }
-  setOpenContext(bool b){
-    file.openContext=b;
+
+  setOpenContext(bool b) {
+    file.openContext = b;
   }
 
   @override
   State<StatefulWidget> createState() => file;
 }
 
-class File extends State<StatefulWidget>  {
+class File extends State<StatefulWidget> {
   //当前选中的文件夹或文件
   String choiceFile = "";
   String choicedGroup = "main";
+
   //存放文件
   fileTree files = fileTree();
+
   //存放组名
   List<String> _groups = [];
+
   //存放显示内容（文件树）
   Widget filesContent = const Text("正在加载");
 
@@ -93,6 +97,7 @@ class File extends State<StatefulWidget>  {
 
   //右键上下文是否展开
   bool openContext = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(

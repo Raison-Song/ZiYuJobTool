@@ -3,14 +3,43 @@ import 'package:zi_yu_job/config/clipboard/Style.dart';
 
 import '../component/clipboard/Content.dart';
 import '../config/Style.dart';
+import 'package:flutter/services.dart';
 
 class ClipboardWidget extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => Clipboard();
+  State<StatefulWidget> createState() => Clipboards();
 }
 
 /// 粘贴板
-class Clipboard extends State<ClipboardWidget> {
+class Clipboards extends State<ClipboardWidget> {
+  String _clipboardText = '';
+
+  List<Widget> copyDataList =<Widget>[];
+
+  void _loadClipboardContent() async {
+    ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
+    if (data != null) {
+      setState(() {
+        _clipboardText = data.text ?? '';
+      });
+    }
+  }
+
+  Future<void> getCopyListAsync() async {
+    var copyDataListTemp =await ClipboardContent.getContent();
+    setState(() {
+      copyDataList=copyDataListTemp;
+    });
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    // _loadClipboardContent();
+    getCopyListAsync();
+    //todo 将数据库数据保存至内存，读取剪切板时同时保存内存与数据库
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,7 +71,9 @@ class Clipboard extends State<ClipboardWidget> {
                         margin: const EdgeInsets.only(
                             left: 20, top: 10, right: 20, bottom: 20),
                         color: ClipboardStyle.white,
-                        child: ClipboardContent.getContent())),
+                        child: ListView(
+                          children: copyDataList,
+                        ))),
                 Expanded(
                     child: Container(
                         color: ClipboardStyle.white,
@@ -57,7 +88,7 @@ class Clipboard extends State<ClipboardWidget> {
             color: Colors.lightBlue,
             width: MediaQuery.of(context).size.width * 1,
             height: 200,
-            margin: EdgeInsets.only(left: 20, top: 0, right: 20, bottom: 20),
+            margin: const EdgeInsets.only(left: 20, top: 0, right: 20, bottom: 20),
             child: ColoredBox(
               color: ClipboardStyle.white,
               child: ClipboardContent.getDetail(),

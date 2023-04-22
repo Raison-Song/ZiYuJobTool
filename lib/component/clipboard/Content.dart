@@ -1,50 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:zi_yu_job/util/CopyUtil.dart';
+
+import '../../util/SqliteUtil.dart';
 // import 'package:screen_text_extractor/screen_text_extractor.dart';
 
-class ClipboardContent{
-  static Widget getDetail(){
+class ClipboardContent {
+  static Widget getDetail() {
     return ListView(
 
     );
   }
 
-  static Widget getContent(){
+  static Widget getGroupContent() {
     return ListView(
 
     );
   }
 
-  static Widget getGroupContent(){
-    return ListView(
+  //获取剪切板历史记录
+  static Future<List<Widget>> getContent() async {
+    var list = <Widget>[];
 
-    );
+    Database db = await DBManager().getDatabase();
+    var dataList = await db
+        .query("clipboard_txt", orderBy: "id desc", limit: 500);
+
+    for (var data in dataList) {
+      list.add(
+        TextButton(onPressed: () => CopyUtil.copy(data["txt"].toString()),
+          child: Text(data["txt"].toString()
+            , style: TextStyle(color: Color(0xff000000),
+                fontWeight: FontWeight.normal), textAlign: TextAlign.left,),style
+              : TextButton.styleFrom(
+          alignment: Alignment.centerLeft, // 设置按钮中的文字靠左对齐
+        ),));
   }
 
-  // final screenTextExtractor = ScreenTextExtractor.instance;
-  // String? _text;
-  //
-  // Container getContent(){
-  //   return Container(
-  //
-  //   );
-  // }
-
-  // void _getClipboardText() async {
-  //   ExtractedData? data = await screenTextExtractor.extract(mode: ExtractMode.clipboard);
-  //   _setText(data);
-  // }
-  // void _setText(ExtractedData? data) {
-  //   if (data == null) {
-  //     BotToast.showText(text: '剪切板什么都没有🤨');
-  //   } else {
-  //     if (_text == data.text) {
-  //       BotToast.showText(text: '换个内容再粘贴吧🥱');
-  //     } else {
-  //       _text = data.text;
-  //       _type = ClipboardType.text;
-  //       setState(() {});
-  //     }
-  //   }
-  // }
+    return
+    list;
+  }
 
 }
