@@ -19,19 +19,19 @@ class ClipboardContent {
     for (var data in dataList) {
       list.add(TextButton(
           onPressed: () => CopyUtil.copy(data["txt"].toString()),
+          style: TextButton.styleFrom(
+            alignment: Alignment.centerLeft, // 设置按钮中的文字靠左对齐
+          ),
           child: Row(
             children: [
               Text(
                 data["txt"].toString(),
-                style: TextStyle(
+                style: const TextStyle(
                     color: Color(0xff000000), fontWeight: FontWeight.normal),
                 textAlign: TextAlign.left,
               ),
-              Icon(Icons.star,color: Colors.yellow,)
+              const Icon(Icons.star,color: Colors.yellow,)
             ],
-          ),
-          style: TextButton.styleFrom(
-            alignment: Alignment.centerLeft, // 设置按钮中的文字靠左对齐
           )));
     }
 
@@ -55,7 +55,7 @@ class ClipboardContent {
         onPressed: () => CopyUtil.copy(data["txt"].toString()),
         child: Text(
           data["txt"].toString(),
-          style: TextStyle(
+          style: const TextStyle(
               color: Color(0xff000000), fontWeight: FontWeight.normal),
           textAlign: TextAlign.left,
         ),

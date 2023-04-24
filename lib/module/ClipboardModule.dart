@@ -3,7 +3,7 @@ import 'package:zi_yu_job/AbstractModule.dart';
 
 import '../MenuStyle.dart';
 import 'clipboardModule/ClipboardStyle.dart';
-import '../component/clipboard/Content.dart';
+import 'clipboardModule/Content.dart';
 import 'package:flutter/services.dart';
 
 class ClipboardModule extends AbstractModule{

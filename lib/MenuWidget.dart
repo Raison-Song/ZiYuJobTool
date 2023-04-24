@@ -21,6 +21,7 @@ class Menu extends State<StatefulWidget> {
   String chosenBtn = "";
 
   var modulesBtnWidget = <Widget>[];
+
   Menu() {
     ///将所有模块加载
     WidgetManage.widgets.forEach((key, value) {
@@ -39,27 +40,27 @@ class Menu extends State<StatefulWidget> {
                 width: _btnWidth,
                 height: MediaQuery.of(context).size.height * 1,
                 child: Column(children: [
-                  Expanded(
-                      child: ListView(children:
-                        modulesBtnWidget
-                      )),
+                  Expanded(child: ListView(children: modulesBtnWidget)),
                   spreadBtn()
                 ]))));
   }
 
-  ColoredBox newBtn(AbstractModule module, {bool? isLogin}) {
-    isLogin ??= true;
+  ColoredBox newBtn(AbstractModule module) {
+    isLogin = Main.isLogin();
     return ColoredBox(
-        color: isLogin
+        color: isLogin || module.moduleName == "用户信息"
             ? chosenBtn == module.moduleName
                 ? MenuStyle.chosenBtn
                 : MenuStyle.unChosenBtn
             : MenuStyle.unUseBtn,
         child: (TextButton(
-          onPressed: (){
-            choice(module.moduleName);
-            WidgetManage.contentWidgets.content.changeWidget(module.moduleName);
-          },
+          onPressed: isLogin || module.moduleName == "用户信息"
+              ? () {
+                  choice(module.moduleName);
+                  WidgetManage.contentWidgets.content
+                      .changeWidget(module.moduleName);
+                }
+              : null,
           child: Row(
             children: [
               Icon(
@@ -70,7 +71,7 @@ class Menu extends State<StatefulWidget> {
                 width: _blank,
               ),
               Text(
-                _btnWidth==40?"":module.moduleName,
+                _btnWidth == 40 ? "" : module.moduleName,
                 style: MenuStyle.menuStyle(),
               )
             ],
@@ -80,49 +81,45 @@ class Menu extends State<StatefulWidget> {
 
   void choice(String moduleName) {
     setState(() {
-      chosenBtn=moduleName;
-      modulesBtnWidget=[];
+      chosenBtn = moduleName;
+      modulesBtnWidget = [];
       WidgetManage.widgets.forEach((key, value) {
         modulesBtnWidget.add(newBtn(value.abstractModule));
       });
     });
   }
-  spreadBtn(){
+
+  spreadBtn() {
     return Container(
-      width: _btnWidth,
-        color: isLogin
-            ? MenuStyle.unChosenBtn
-            : MenuStyle.unUseBtn,
+        width: _btnWidth,
+        color: isLogin ? MenuStyle.unChosenBtn : MenuStyle.unUseBtn,
         child: (TextButton(
-          onPressed: ()=> spread(),
-          child:
-              Icon(
-                Icons.switch_left,
-                color: MenuStyle.fontMenuColor,
-              ),
-
-          )
-        ));
+          onPressed: () => spread(),
+          child: Icon(
+            Icons.switch_left,
+            color: MenuStyle.fontMenuColor,
+          ),
+        )));
   }
-  spread(){
-    if(_btnWidth==40){
-      setState(() {
-        _btnWidth=120;
-        _blank=10;
-      });
-    }else{
-      setState(() {
-        _btnWidth=40;
-        _blank=0;
 
+  spread() {
+    if (_btnWidth == 40) {
+      setState(() {
+        _btnWidth = 120;
+        _blank = 10;
+      });
+    } else {
+      setState(() {
+        _btnWidth = 40;
+        _blank = 0;
       });
     }
     choice(chosenBtn);
   }
 
-  void changeLoginState(bool bool) {
+  void uploadLoginState() {
     setState(() {
-      isLogin=bool;
+      isLogin = Main.isLogin();
     });
   }
 }

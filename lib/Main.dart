@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:zi_yu_job/WidgetManage.dart';
+import 'package:zi_yu_job/module/LoginModule.dart';
 
 import 'package:zi_yu_job/util/SqliteUtil.dart';
 
@@ -31,31 +32,38 @@ class Main {
     print("（初始化）查询到上次登陆的用户：$getUser");
     //如果登陆账户只有一个
     if (getUser.length == 1) {
-      _user = getUser[0]["id"].toString();
+
+      await Main.setUser(getUser[0]["id"].toString());
+
       _folderAddress=getUser[0]["folder_address"].toString();
+
       print("跳转到文件管理页面");
       //跳转到文件管理页面
       Main.getMenu().menu.choice("文件管理");
-      Main.getMenu().menu.changeLoginState(true);
       WidgetManage.contentWidgets.content.changeWidget("文件管理");
+
       //文件页面初始化
       GetData().updateFileTree("main");
+      //刷新登录页面
+      LoginModule loginModule= (WidgetManage.widgets.putIfAbsent("用户信息",
+              () => MyWidget(LoginModule())).abstractModule as LoginModule);
+      loginModule.update();
+
     } else if (getUser.length > 1) {
       //将所有用户下线
       db.update("users", {'is_use': '0'});
       //跳转到登陆页面
-      Main.getMenu().menu.choice("用户登录");
-      Main.getMenu().menu.changeLoginState(false);
+      Main.getMenu().menu.choice("用户信息");
       WidgetManage.contentWidgets.content.changeWidget("用户信息");
+
     }else{
       //跳转到登陆页面
-      Main.getMenu().menu.choice("用户登录");
-      Main.getMenu().menu.changeLoginState(false);
-      WidgetManage.contentWidgets.content.changeWidget("用户登录");
+      Main.getMenu().menu.choice("用户信息");
+      WidgetManage.contentWidgets.content.changeWidget("用户信息");
     }
-    FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
-            () => MyWidget(FileModule())).abstractModule as FileModule);
-    fileModule.updateGroups();
+    // FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+    //         () => MyWidget(FileModule())).abstractModule as FileModule);
+    // fileModule.updateGroups();
     //db.close();
   }
 
@@ -69,14 +77,16 @@ class Main {
     //将其他用户下线
     db.update("users", {'is_use': '0'}, where: "id!=?", whereArgs: [user]);
     _user = user;
+    _menu.menu.uploadLoginState();
   }
 
   static String getUser() {
     return _user;
   }
-///注销用户
+  ///注销用户
   static void logoutUser() {
     _user = _noUser;
+    _menu.menu.uploadLoginState();
   }
 
   static void setFolderAddress(String add){

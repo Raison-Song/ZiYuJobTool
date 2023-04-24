@@ -13,8 +13,6 @@ class GetData {
           () => MyWidget(FileModule())).abstractModule as FileModule);
 
   setAllFiles() async {
-
-
     Map<String, String> allFilesTEMP = {};
     var db = await DBManager().getDatabase();
     var files = await db.query("folder_file",
