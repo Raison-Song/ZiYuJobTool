@@ -10,7 +10,6 @@ import 'package:zi_yu_job/util/SqliteUtil.dart';
 import 'MenuWidget.dart';
 import 'MyWidget.dart';
 import 'module/FileModule.dart';
-import 'module/fileModule/GetData.dart';
 
 class Main {
   static const String _noUser = "NoUser";
@@ -43,7 +42,9 @@ class Main {
       WidgetManage.contentWidgets.content.changeWidget("文件管理");
 
       //文件页面初始化
-      GetData().updateFileTree("main");
+      FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+              () => MyWidget(FileModule())).abstractModule as FileModule);
+      fileModule.choiceGroup("main");
       //刷新登录页面
       LoginModule loginModule= (WidgetManage.widgets.putIfAbsent("用户信息",
               () => MyWidget(LoginModule())).abstractModule as LoginModule);
@@ -117,3 +118,4 @@ Future<void> main() async {
     ),
   );
 }
+

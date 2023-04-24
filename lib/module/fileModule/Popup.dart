@@ -21,6 +21,7 @@ class Popup{
     FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
             () => MyWidget(FileModule())).abstractModule as FileModule);
 
+    var msg="创建新文件夹";
     return showDialog<void>(
       context: fileModule.context,
       barrierDismissible: true, // 点击任意处取消
@@ -32,11 +33,17 @@ class Popup{
               return TextField(
                 autofocus: true,
                 maxLength: 14,
-                decoration: const InputDecoration(labelText: "创建新文件夹"),
+                decoration: InputDecoration(labelText: msg),
                 onSubmitted: (value) {
-                  addNewFolder(preFolder, value);
-                  Navigator.pop(context);
-                  GetData().updateFileTree(fileModule.chosenGroup);
+                  var msg=addNewFolder(preFolder, value);
+                  if(""!=msg){
+                    //todo 将msg显示到输入框下
+
+                  }else{
+                    Navigator.pop(context);
+                    GetData().updateFileTree(fileModule.chosenGroup);
+                  }
+
                 },
               );
             },
@@ -131,11 +138,16 @@ class Popup{
         whereArgs: [Main.getUser(), oldGroupName]);
   }
 
-  Future<void> addNewFolder(String preFolder, String newFolderName) async {
+  Future<String> addNewFolder(String preFolder, String newFolderName) async {
     FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
             () => MyWidget(FileModule())).abstractModule as FileModule);
 
     var db = await DBManager().getDatabase();
+    
+    var a=await db.query("folder",where: "folder_name=?",whereArgs: [newFolderName]);
+    if(a.isNotEmpty){
+      return "存在相同的文件名";
+    }
     await db.insert("folder", {
       //id规则:时间戳+userid+5位随机数
       "id": "${DateTime.now().millisecondsSinceEpoch}u"
@@ -146,7 +158,7 @@ class Popup{
       "group_name": fileModule.chosenGroup,
       "user_id": Main.getUser()
     });
-    //db.close();
+    return "";
   }
 
   Future<void> addNewGroup(String newGroupName) async {

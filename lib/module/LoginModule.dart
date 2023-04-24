@@ -3,9 +3,11 @@ import 'package:zi_yu_job/AbstractModule.dart';
 
 import '../Main.dart';
 
+import '../MyWidget.dart';
 import '../WidgetManage.dart';
 import '../config/Style.dart';
 import '../util/SqliteUtil.dart';
+import 'FileModule.dart';
 import 'fileModule/GetData.dart';
 
 class LoginModule extends AbstractModule {
@@ -227,7 +229,10 @@ class LoginModule extends AbstractModule {
     WidgetManage.contentWidgets.content.changeWidget("文件管理");
 
     //文件页面初始化
-    GetData().updateFileTree("main");
+    FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
+            () => MyWidget(FileModule())).abstractModule as FileModule);
+    fileModule.choiceGroup("main");
+
   }
 
   //注销账户

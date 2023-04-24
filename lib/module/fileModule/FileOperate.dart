@@ -10,9 +10,25 @@ import '../../MyWidget.dart';
 import '../../WidgetManage.dart';
 import '../../util/SqliteUtil.dart';
 import '../FileModule.dart';
+import 'package:process_run/shell.dart';
 
 class FileOperate{
-  Future<File> moveFile(File originalFile, String targetPath) async {
+  //打开文件
+  static Future<void> openMyFile(String fileName) async {
+    ///应用管理目录
+    final parentDir = await getApplicationSupportDirectory();
+    final path = "${parentDir.path}${Platform.pathSeparator}$fileName";
+    final file = File(path);
+
+    if (await file.exists()) {
+      final shell = Shell();
+      shell.run(path);
+    } else {
+      print('File not found.');
+    }
+  }
+
+  static Future<File> moveFile(File originalFile, String targetPath) async {
     try {
       // This will try first to just rename the file if they are on the same directory,
       return await originalFile.rename(targetPath);
@@ -25,7 +41,7 @@ class FileOperate{
   }
   ///上传本地文件
   ///@param fileType 文件类型
-  Future<void> importLocalFile(String folderName,String groupName,{List<String>? fileType}) async {
+  static Future<void> importLocalFile(String folderName,String groupName,{List<String>? fileType}) async {
     fileType??=[];
     final xType = XTypeGroup(label: '所有', extensions: fileType);
     final XFile? file = await openFile(acceptedTypeGroups: [xType]);
@@ -36,7 +52,7 @@ class FileOperate{
   }
 
   ///保存文件至应用目录
-  saveFile(String filePath,String fileName) async {
+  static saveFile(String filePath,String fileName) async {
     print("开始保存");
     ///应用管理目录
     final parentDir = await getApplicationSupportDirectory();
@@ -63,7 +79,7 @@ class FileOperate{
   }
 
   ///写入本地数据库
-  Future<void> setFileChangeBd(String folderName,String groupName,String fileName) async {
+  static Future<void> setFileChangeBd(String folderName,String groupName,String fileName) async {
     var db = await DBManager().getDatabase();
     await db.insert("folder_file",{
       "id":"${DateTime.now().millisecondsSinceEpoch}u"
@@ -78,7 +94,7 @@ class FileOperate{
   }
 
   /// 获取应用程序目录
-  String _getLocalSupport()  {
+  static String _getLocalSupport()  {
     Directory tempDir= getApplicationSupportDirectory() as Directory;
     return tempDir.path;
   }
