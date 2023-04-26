@@ -89,7 +89,7 @@ class ShowContext{
           disabled: true,
         ),
         MenuItem(
-          label: '新加文件',
+          label: '打开文件',
           onClick: (_) {
             FileOperate.openMyFile(fileName);
 

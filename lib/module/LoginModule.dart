@@ -27,7 +27,7 @@ class LoginModule extends AbstractModule {
 
   TextEditingController _usernameController = TextEditingController(text: "");
 
-  void update(){
+  void update() {
     setState(() {
       _usernameController = TextEditingController(text: Main.getUser());
     });
@@ -47,16 +47,16 @@ class LoginModule extends AbstractModule {
                 children: [
                   _isEditingUsername
                       ? Expanded(
-                    child: TextFormField(
-                      controller: _usernameController,
-                    ),
-                  )
+                          child: TextFormField(
+                            controller: _usernameController,
+                          ),
+                        )
                       : Text(
-                    _usernameController.text,
-                    style: TextStyle(fontSize: 24.0),
-                  ),
+                          _usernameController.text,
+                          style: const TextStyle(fontSize: 24.0),
+                        ),
                   IconButton(
-                    icon: Icon(Icons.edit),
+                    icon: const Icon(Icons.edit),
                     onPressed: () {
                       setState(() {
                         _isEditingUsername = !_isEditingUsername;
@@ -65,17 +65,17 @@ class LoginModule extends AbstractModule {
                   ),
                 ],
               ),
-              SizedBox(height: 16.0),
-              Text(
-                "Settings",
+              const SizedBox(height: 16.0),
+              const Text(
+                "设置",
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               ListTile(
-                leading: Icon(Icons.folder),
-                title: Text("Cache Directory"),
-                subtitle: Text("/path/to/cache"),
-                trailing: Icon(Icons.arrow_forward_ios),
+                leading: const Icon(Icons.folder),
+                title: const Text("本地缓存地址"),
+                subtitle: const Text("C:/zi_yu/to/cache"),
+                trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   // TODO: 处理点击设置项的逻辑
                 },
@@ -88,7 +88,7 @@ class LoginModule extends AbstractModule {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          child: Icon(Icons.logout),
+          child: const Icon(Icons.logout),
           onPressed: () {
             logout();
           },
@@ -229,10 +229,10 @@ class LoginModule extends AbstractModule {
     WidgetManage.contentWidgets.content.changeWidget("文件管理");
 
     //文件页面初始化
-    FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
-            () => MyWidget(FileModule())).abstractModule as FileModule);
+    FileModule fileModule = (WidgetManage.widgets
+        .putIfAbsent("文件管理", () => MyWidget(FileModule()))
+        .abstractModule as FileModule);
     fileModule.choiceGroup("main");
-
   }
 
   //注销账户
