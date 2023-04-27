@@ -6,8 +6,6 @@ import 'package:zi_yu_job/module/fileModule/FileOperate.dart';
 
 import '../../Main.dart';
 import '../../util/SqliteUtil.dart';
-
-import 'GetData.dart';
 import 'Popup.dart';
 
 class ShowContext{
@@ -77,7 +75,7 @@ class ShowContext{
   }
 
   //显示上下文菜单-文件操作
-  editFile(String fileName) {
+  editFile(String fileName,String groupName) {
     ///获取file
     FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
             () => MyWidget(FileModule())).abstractModule as FileModule);
@@ -91,6 +89,9 @@ class ShowContext{
         MenuItem(
           label: '打开文件',
           onClick: (_) {
+            //todo 每一次打开文件，先备份原文件 ，
+            // 每分钟判断一下文件是否被更改（更新时间是否>记录时间） ， 如果是则备份文件并记录
+            // 并判断文件是否被占用 ， 如果否则退出监听
             FileOperate.openMyFile(fileName);
 
           },
@@ -101,11 +102,17 @@ class ShowContext{
             FileOperate.openMyFile(fileName);
           },
         ),
+        MenuItem(
+          label: '历史版本',
+          onClick: (_){
+            // todo 生成弹出窗，展示此文件的所有历史版本
+          }
+        ),
         MenuItem.separator(),
         MenuItem(
             label: '删除文件',
             onClick: (_) {
-              delFolder(fileName);
+              delFile(groupName,fileName);
               fileModule
                   .choiceGroup(
                   fileModule
@@ -197,6 +204,16 @@ class ShowContext{
     for(int i=0;i<id.length;i++){
       delFolder(id[i]["folder_name"].toString(),choicedGroup: choicedGroup);
     }
+  }
+
+  //删除文件
+  delFile(String groupName,String fileName) async {
+
+    var db = await DBManager().getDatabase();
+    await db.update("folder_file",{"is_delete":1},
+        where: "user_id=? and group_name=? and file_name=?",
+        whereArgs: [Main.getUser(),groupName,fileName]);
+
   }
 
 

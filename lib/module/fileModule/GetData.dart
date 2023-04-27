@@ -16,7 +16,7 @@ class GetData {
     Map<String, String> allFilesTEMP = {};
     var db = await DBManager().getDatabase();
     var files = await db.query("folder_file",
-        where: "user_id=? and group_id=?",
+        where: "user_id=? and group_id=? and is_delete=0",
         whereArgs: [Main.getUser(), fileModule.chosenGroup]);
 
     for (int i = 0; i < files.length; i++) {
@@ -36,7 +36,7 @@ class GetData {
     var filesTree = fileTree();
     var db = await DBManager().getDatabase();
     var allFiles = await db.query("folder_file",
-        where: "user_id=? and group_name=?",
+        where: "user_id=? and group_name=? and is_delete=0",
         whereArgs: [Main.getUser(), groupName]);
     //db.close();
 

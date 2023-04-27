@@ -164,7 +164,7 @@ class FileContent {
           },
           onPointerUp: (e) {
             if (fileModule.openContext) {
-              ShowContext().editFile(name);
+              ShowContext().editFile(name,groupName);
 
               fileModule.openContext = false;
             }
@@ -175,10 +175,10 @@ class FileContent {
               },
               child: Row(
                 children: [
-                  Text(pre + "      "),
+                  Text("$pre      "),
                   icon,
                   Text(
-                    " " + name,
+                    " $name",
                     style: FileStyle().getFileFont(),
                   )
                 ],
@@ -229,7 +229,7 @@ class FileContent {
                       : const Icon(Icons.arrow_right, color: Colors.grey),
                   icon,
                   Text(
-                    " " + name,
+                    " $name",
                     style: FileStyle().getFileFont(),
                   )
                 ],
