@@ -7,7 +7,7 @@ import Foundation
 
 import contextual_menu
 import file_selector_macos
-import path_provider_macos
+import path_provider_foundation
 import sqflite
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

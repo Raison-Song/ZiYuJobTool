@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import '../AbstractModule.dart';
+import '../util/CreateFileUtil.dart';
 
 class FastTxtModule extends AbstractModule{
   @override
@@ -20,7 +21,8 @@ class FastTxtModule extends AbstractModule{
   void _submitText() {
     String text = textController.text;
     // 在这里添加处理文本的逻辑
-    print(text);
+    CreateFileUtil.writeStringToFile(text);
+    textController.text="";
   }
 
 

@@ -1,8 +1,11 @@
 // 一般来说, app没有使用Scaffold的话，会有一个黑色的背景和一个默认为黑色的文本颜色。
 // 这个app，将背景色改为了白色，并且将文本颜色改为了黑色以模仿Material app
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:zi_yu_job/WidgetManage.dart';
+import 'package:zi_yu_job/module/ClipboardModule.dart';
 import 'package:zi_yu_job/module/LoginModule.dart';
 
 import 'package:zi_yu_job/util/SqliteUtil.dart';
@@ -10,6 +13,8 @@ import 'package:zi_yu_job/util/SqliteUtil.dart';
 import 'MenuWidget.dart';
 import 'MyWidget.dart';
 import 'module/FileModule.dart';
+import 'module/clipboardModule/Content.dart';
+import 'module/clipboardModule/ListenClipboard.dart';
 
 class Main {
   static const String _noUser = "NoUser";
@@ -22,6 +27,22 @@ class Main {
   static final MenuWidget _menu = MenuWidget();
 
   static Future<void> initMain() async {
+
+
+    ClipboardMonitor monitor = ClipboardMonitor();
+    // 开始监控
+    monitor.start(interval: 3);
+    // 监听剪贴板变化
+    StreamSubscription<String> subscription =
+    monitor.clipboardStream.listen((String data) async {
+      //将data信息保存至数据库与内存
+      if(await ClipboardContent.setContent(data)){
+        ClipboardModule clipboardModule= (WidgetManage.widgets.putIfAbsent("粘贴板",
+                () => MyWidget(ClipboardModule())).abstractModule as ClipboardModule);
+        clipboardModule.getCopyListAsync();
+      }
+    });
+
 
     WidgetManage.scanWidgets();
 
@@ -49,6 +70,11 @@ class Main {
       LoginModule loginModule= (WidgetManage.widgets.putIfAbsent("用户信息",
               () => MyWidget(LoginModule())).abstractModule as LoginModule);
       loginModule.update();
+
+      //刷新粘贴板页面
+      ClipboardModule clipboardModule= (WidgetManage.widgets.putIfAbsent("粘贴板",
+              () => MyWidget(ClipboardModule())).abstractModule as ClipboardModule);
+      clipboardModule.getCopyListAsync();
 
     } else if (getUser.length > 1) {
       //将所有用户下线
@@ -106,6 +132,8 @@ class Main {
 Future<void> main() async {
   //初始化=>获取登陆信息
   Main.initMain();
+
+
 
   //进行页面渲染
   runApp(

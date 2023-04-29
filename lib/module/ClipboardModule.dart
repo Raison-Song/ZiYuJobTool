@@ -22,6 +22,7 @@ class ClipboardModule extends AbstractModule{
 
   String _clipboardText = '';
 
+
   List<Widget> copyDataList =<Widget>[];
   List<Widget> copyCollectDataList =<Widget>[];
 
