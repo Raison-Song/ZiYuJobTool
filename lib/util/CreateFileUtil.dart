@@ -25,7 +25,7 @@ class CreateFileUtil {
     //文件页面初始化
     FileModule fileModule= (WidgetManage.widgets.putIfAbsent("文件管理",
             () => MyWidget(FileModule())).abstractModule as FileModule);
-    fileModule.choiceGroup("main");
+    fileModule.updateContent();
   }
 
   static String _getSafeString(String str) {

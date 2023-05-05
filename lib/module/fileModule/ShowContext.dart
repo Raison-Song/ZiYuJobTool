@@ -138,7 +138,9 @@ class ShowContext{
             Popup().renameGroup(groupName);
 
             if(groupName==fileModule.chosenGroup){
-              fileModule.choiceGroup("main");
+              // fileModule.choiceGroup("main");
+              fileModule
+                  .choiceGroup(fileModule.chosenGroup);
             }else{
               fileModule
                   .choiceGroup(fileModule.chosenGroup);

@@ -98,16 +98,16 @@ class ClipboardModule extends AbstractModule{
             ),
           ),
           //属性
-          Container(
-            color: Colors.lightBlue,
-            width: MediaQuery.of(context).size.width * 1,
-            height: 200,
-            margin: const EdgeInsets.only(left: 20, top: 0, right: 20, bottom: 20),
-            child: ColoredBox(
-              color: ClipboardStyle.white,
-              child: ListView(children: []),
-            ),
-          )
+          // Container(
+          //   color: Colors.lightBlue,
+          //   width: MediaQuery.of(context).size.width * 1,
+          //   height: 200,
+          //   margin: const EdgeInsets.only(left: 20, top: 0, right: 20, bottom: 20),
+          //   child: ColoredBox(
+          //     color: ClipboardStyle.white,
+          //     child: ListView(children: []),
+          //   ),
+          // )
         ],
       ),
     );

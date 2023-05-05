@@ -24,11 +24,10 @@ class Main {
   //文件缓存位置
   static String _folderAddress="";
 
+
   static final MenuWidget _menu = MenuWidget();
 
   static Future<void> initMain() async {
-
-
     ClipboardMonitor monitor = ClipboardMonitor();
     // 开始监控
     monitor.start(interval: 3);
@@ -134,10 +133,10 @@ Future<void> main() async {
   Main.initMain();
 
 
-
   //进行页面渲染
   runApp(
     MaterialApp(
+        debugShowCheckedModeBanner: false,
       home: Scaffold(
           body: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Main.getMenu(),

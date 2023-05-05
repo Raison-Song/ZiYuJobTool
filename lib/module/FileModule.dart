@@ -169,8 +169,8 @@ class FileModule extends AbstractModule{
     //db.close();
 
     List<String> groupsList = [];
-    groupsList.add("上传时间");
-    groupsList.add("文件类型");
+    // groupsList.add("上传时间");
+    // groupsList.add("文件类型");
     for (int i = 0; i < groups.length; i++) {
       groupsList.add(groups[i]["group_name"].toString());
     }

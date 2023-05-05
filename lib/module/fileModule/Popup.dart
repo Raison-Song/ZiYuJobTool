@@ -37,8 +37,9 @@ class Popup{
                 onSubmitted: (value) {
                   var msg=addNewFolder(preFolder, value);
                   if(""!=msg){
-                    //todo 将msg显示到输入框下
-
+                    //todo 将msg显示到输入框下 err
+                    Navigator.pop(context);
+                    GetData().updateFileTree(fileModule.chosenGroup);
                   }else{
                     Navigator.pop(context);
                     GetData().updateFileTree(fileModule.chosenGroup);

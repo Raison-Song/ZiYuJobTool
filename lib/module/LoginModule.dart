@@ -6,6 +6,7 @@ import '../Main.dart';
 import '../MyWidget.dart';
 import '../WidgetManage.dart';
 import '../config/Style.dart';
+import '../util/FolderPickerUtil.dart';
 import '../util/SqliteUtil.dart';
 import 'FileModule.dart';
 import 'fileModule/GetData.dart';
@@ -78,6 +79,7 @@ class LoginModule extends AbstractModule {
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   // TODO: 处理点击设置项的逻辑
+                  pickFolder();
                 },
               ),
             ],
@@ -247,5 +249,16 @@ class LoginModule extends AbstractModule {
     //将main保存的用户清除
     Main.logoutUser();
     Main.initMain();
+  }
+
+  String? selectedPath;
+
+  void pickFolder() async {
+    final String? folderPath = await FolderPickerUtil.getFolderPath();
+    if (folderPath != null) {
+      setState(() {
+        selectedPath = folderPath;
+      });
+    }
   }
 }
